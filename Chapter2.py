@@ -1,3 +1,6 @@
+from datetime import datetime
+import json
+
 __author__ = 'stephenosullivan'
 
 
@@ -204,7 +207,7 @@ class Item18:
         it = self.my_generator()
         self.my_func(it)
 
-     def log(self, message, *values):
+    def log(self, message, *values):
         if not values:
             print(message)
         else:
@@ -218,6 +221,110 @@ class Item18:
     def my_func(self, *args):
         print(args)
 
+class Item20:
+    """
+    Use None and docstrings to specify dynamic default arguments
+    """
+    def __init__(self):
+        self.log_bad('Hello there')
+        self.log_bad('Hello there')     # Same time
+        self.log('Hello there')
+        self.log('Hello there')
+        data = str(567)
+        print(self.decode_bad(data))
+        foo = self.decode_bad('bad data')
+        foo['stuff'] = 5
+        bar = self.decode_bad('also bad')
+        bar['meep'] = 1
+        print('Foo', foo)
+        print('Bar', bar)
+
+        # Test the good version
+        foo = self.decode('data')
+        foo['stuff'] = 5
+        bar = self.decode('not bad')
+        bar['meep'] = 1
+        print('Foo', foo)
+        print('Bar', bar)
+
+
+    def log_bad(self, message, when=datetime.now()):
+        print('%s: %s' % (message, when))
+
+    def log(self, message, when=None):
+        """
+        Log a message with a timestamp
+        :param message: Message to print
+        :param when: datetime of when message occurred
+                    Defaults to the present time
+        :return: void
+        """
+        when = datetime.now() if when is None else when
+        print('%s: %s' % (message, when))
+
+    def decode_bad(self,data, default={}):
+        try:
+            return json.loads(data)
+        except ValueError:
+            return default
+
+    def decode(self,data,default=None):
+        """
+        Load JSON data from a string
+
+        :param data: JSON data to decode
+        :param default:Value to return if decoding fails.
+                Defaults to an empty dictionary
+        :return: dict()
+        """
+        default = {} if default is None else default
+
+        try:
+            return json.loads(data)
+        except ValueError:
+            return default
+
+class Item21:
+    """
+    Enforce clarity with keyword only arguments
+    """
+    def __init__(self):
+        print(self.safe_division(1, 10**500, True, False))
+        print(self.safe_division(10**500, 1, True, False))
+        print(self.safe_division(1, 0, True, True))
+        print(self.safe_division_c(1, 0, ignore_zero_division=True))
+
+    def safe_division(self, number, divisor, ignore_overflow, ignore_zero_division):
+        try:
+            return number / divisor
+        except OverflowError:
+            if ignore_overflow:
+                return 0
+            else:
+                raise
+        except ZeroDivisionError:
+            if ignore_zero_division:
+                return float('inf')
+            else:
+                raise
+
+    # Keyword-only safe division
+    # '*' symbol indicates the end of positional arguments and the beginning
+    # of keyword-only arguments
+
+    def safe_division_c(self, number, divisor, *, ignore_overflow=False, ignore_zero_division=False):
+        try:
+            return number / divisor
+        except OverflowError:
+            if ignore_overflow:
+                return 0
+            else:
+                raise
+        except ZeroDivisionError:
+            if ignore_zero_division:
+                return float('inf')
+            else:
+                raise
 
 if __name__ == "__main__":
     sol14 = Item14()
@@ -225,3 +332,5 @@ if __name__ == "__main__":
     sol16 = Item16()
     sol17 = Item17()
     sol18 = Item18()
+    sol20 = Item20()
+    sol21 = Item21()
