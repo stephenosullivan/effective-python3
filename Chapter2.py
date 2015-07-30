@@ -135,19 +135,32 @@ class Item17:
     # keep a copy of its entire contents in a list
 
     # Or accept a function that returns a new iterator
-    # each time it is called
+    # each time it is called ???
+
+    # Best way is just to build a class with __iter__
+    # then calls can be made to __iter__ to allocate a
+    # second iterator object
+
     def __init__(self):
         print('Item 17')
-        #Not sure how this works
-        #percentages = self.normalize_func(lambda: self.read_visits(__file__))
-        visits = Item17_ReadVisits(path)
-        percentages = self.normalize(visits)
+        # Not sure how this works
+        # percentages = self.normalize_func(lambda: self.read_visits(__file__))
+        visits = Item17_ReadVisits('./data_file_17.txt')
+        percentages = self.normalize_defensive(visits)
         print(percentages)
 
     def read_visits(self, data_file):
         with open(data_file) as f:
             for line in f:
                 yield int(line)
+
+    def normalize(self, numbers):
+        total = sum(numbers)
+        result = []
+        for value in numbers:
+            percent = 100 * value / total
+            result.append(percent)
+        return result
 
     def normalize_func(self, get_iter):
         total = sum(get_iter())
@@ -156,6 +169,17 @@ class Item17:
             percent = 100 * value / total
             result.append(percent)
         return result
+
+    def normalize_defensive(self, numbers):
+        if iter(numbers) is iter(numbers):  # returns an error if type iter
+            raise TypeError('Must supply a container')
+        total = sum(numbers)
+        result = []
+        for value in numbers:
+            percent = 100 * value / total
+            result.append(percent)
+        return result
+
 
 class Item17_ReadVisits:
     def __init__(self, data_path):
@@ -166,8 +190,38 @@ class Item17_ReadVisits:
             for line in f:
                 yield int(line)
 
+
+class Item18:
+    """
+    Reduce visual noise with variable positional arguments
+    """
+
+    def __init__(self):
+        self.log('My numbers are', 1, 2)
+        self.log('Hello there')
+        it = self.my_generator()
+        self.my_func(*it)
+        it = self.my_generator()
+        self.my_func(it)
+
+     def log(self, message, *values):
+        if not values:
+            print(message)
+        else:
+            values_str = ', '.join(str(x) for x in values)
+            print('%s: %s' % (message, values_str))
+
+    def my_generator(self):
+        for i in range(10):
+            yield i
+
+    def my_func(self, *args):
+        print(args)
+
+
 if __name__ == "__main__":
     sol14 = Item14()
     sol15 = Item15()
     sol16 = Item16()
     sol17 = Item17()
+    sol18 = Item18()
