@@ -235,8 +235,8 @@ class Exam(object):
 # Save each instance in a dict
 class Grade:
     def __init__(self):
-        self._values = {}
-        #self._values = weakref.WeakKeyDictionary()
+        #self._values = {}
+        self._values = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, instance_type):
         if instance is None:
@@ -254,6 +254,8 @@ class Examv2:
     math_grade = Grade()
     writing_grade = Grade()
     science_grade = Grade()
+
+class
 
 
 
