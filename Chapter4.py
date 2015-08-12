@@ -255,10 +255,107 @@ class Examv2:
     writing_grade = Grade()
     science_grade = Grade()
 
-class
+class Item32:
+    """
+    Use __getattr__, __getattribute__, and __setattr__ for Lazy Attributes
+    """
+    def __init__(self):
+        data = LazyDB()
+        print('Before:', data.__dict__)
+        print('foo:', data.foo)
+        print('After', data.__dict__)
+
+        data = LoggingLazyDB()
+        print('exists:', data.exists)
+        print('foo:   ', data.foo)
+        print('foo:   ', data.foo)
+
+        data = ValidatingDB()
+        print('exists:', data.exists)
+        print('foo:   ', data.foo)
+        print('foo,   ', data.foo)
+
+        data = MissingPropertyDB()
+        #data.bad_name
+
+        data = LoggingLazyDB()
+        print('Before:       ', data.__dict__)
+        print('foo exists:   ', hasattr(data, 'foo'))
+        print('After:        ', data.__dict__)
+        print('foo exists:   ', hasattr(data, 'foo'))
+
+        data = ValidatingDB()
+        print('foo exists: ', hasattr(data, 'foo'))
+        print('foo exists: ', hasattr(data, 'foo'))
+
+        data = LoggingSavingDB()
+        print('Before:    ', data.__dict__)
+        data.foo = 5
+        print('After:     ', data.__dict__)
+        data.foo = 7
+        print('Finally:   ', data.__dict__)
+
+        data = DictionaryDB({'foo': 3})
+        print(data.foo)
+
+class LazyDB:
+    def __init__(self):
+        self.exists = 5
+
+    def __getattr__(self, name):
+        value = 'Value for %s' % name
+        setattr(self, name, value)
+        return value
+
+class LoggingLazyDB(LazyDB):
+    def __getattr__(self, name):
+        print('Called __getattr__(%s)' % name)
+        return super().__getattr__(name)
+
+class ValidatingDB:
+    def __init__(self):
+        self.exists = 5
+
+    def __getattribute__(self, name):
+        print('Called __getAttribute__(%s)' % name)
+        try:
+            return super().__getattribute__(name)
+        except AttributeError:
+            value = 'Value for %s' % name
+            setattr(self, name, value)
+            return value
 
 
+class MissingPropertyDB:
+    def __getattr__(self, name):
+        if name == 'bad_name':
+            raise AttributeError('%s is missing' % name)
 
+class SavingDB:
+    def __setattr__(self, name, value):
+        pass
+        super().__setattr__(name, value)
+
+class LoggingSavingDB(SavingDB):
+    def __setattr__(self, name, value):
+        print('Called __setattr__(%s, %r)' % (name, value))
+        super().__setattr__(name, value)
+
+class BrokenDict:
+    def __init__(self, data):
+        self._data = {}
+
+    def __getattribute__(self, name):
+        print('Called __getattribute__(%s)' % name)
+        return self._data[name]
+
+class DictionaryDB:
+    def __init__(self, data):
+        self._data = data
+
+    def __getattribute__(self, item):
+        data_dict = super().__getattribute__('_data')
+        return data_dict[item]
 
 
 
@@ -267,3 +364,4 @@ if __name__ == '__main__':
     sol = Item29()
     sol = Item30()
     sol = Item31()
+    sol = Item32()
