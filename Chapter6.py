@@ -176,14 +176,14 @@ class Item46:
 
 
         print(list(itertools.islice(range(10), 4, 6)))
-        print(list(itertools.takewhile(lambda x: x < 5, [1,4,6,7,3])))
-        print(list(itertools.dropwhile(lambda x: x < 5, [1,4,6,7,3])))
-        print(list(filter(lambda x: x < 5, [1,4,6,7,3])))
-        print(list(itertools.filterfalse(lambda x: x < 5, [1,4,6,7,3])))
+        print(list(itertools.takewhile(lambda x: x < 5, [1, 4, 6, 7, 3])))
+        print(list(itertools.dropwhile(lambda x: x < 5, [1, 4, 6, 7, 3])))
+        print(list(filter(lambda x: x < 5, [1, 4, 6, 7, 3])))
+        print(list(itertools.filterfalse(lambda x: x < 5, [1, 4, 6, 7, 3])))
 
         a = range(3)
-        b = range(4,7)
-        print(list(itertools.product(a,b)))
+        b = range(4, 7)
+        print(list(itertools.product(a, b)))
         print(list(itertools.permutations(b)))
         print(list(itertools.combinations(a, 2)))
 
