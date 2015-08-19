@@ -358,6 +358,64 @@ class DictionaryDB:
         return data_dict[item]
 
 
+class Item33:
+    """
+    Validate subclasses with Metaclasses
+    """
+    def __init__(self):
+        print("Item 23 \n"
+              "-------")
+        a = MyClass()
+        b = a
+        print(a.stuff)
+        print(MyClass)
+
+        print('Before class')
+        #print(Line.interior_angles())
+
+
+
+
+
+class Meta(type):
+    def __new__(meta, name, bases, class_dict):
+        orig_print = __builtins__.print
+        print((meta, name, bases, class_dict))
+        print(orig_print)
+        return type.__new__(meta, name, bases, class_dict)
+
+class MyClass(object, metaclass=Meta):
+    def __init__(self):
+        print('init')
+
+    stuff = 123
+
+    def foo(self):
+        pass
+
+class ValidatePolygon(type):
+    def __new__(meta, name, bases, class_dict):
+        print(bases, 'bases')
+        if bases != (object, ):
+            if class_dict['sides'] < 3:
+                raise ValueError('Polygons need 3+ sides')
+        return type.__new__(meta, name, bases, class_dict)
+
+class Polygon(object, metaclass=ValidatePolygon):
+    sides = None
+
+    @classmethod
+    def interior_angles(cls):
+        return (cls.sides - 2) * 180
+
+class Triangle(Polygon):
+    sides = 3
+
+class Line(Polygon):
+     print('Before sides')
+     sides = 4
+#     print('After sides')
+#     print('After class')
 
 
 if __name__ == '__main__':
@@ -365,3 +423,4 @@ if __name__ == '__main__':
     sol = Item30()
     sol = Item31()
     sol = Item32()
+    sol = Item33()
