@@ -1,13 +1,14 @@
 __author__ = 'stephenosullivan'
 
-
 from datetime import *
 import weakref
+
 
 class Item29:
     """
     Use plain attributes instead of get and set methods
     """
+
     def __init__(self):
         r2 = VoltageResistance(1e3)
         print('Before: %5r amps' % r2.current)
@@ -15,11 +16,11 @@ class Item29:
         print('After: %5r amps' % r2.current)
 
         r3 = BoundedResistance(1e3)
-        #r3.ohms = 0        Error!!
-        #BoundedResistance(-5)
+        # r3.ohms = 0        Error!!
+        # BoundedResistance(-5)
 
         r4 = FixedResistance(1e3)
-        #r4.ohms = 2e3       # Attribute Error
+        # r4.ohms = 2e3       # Attribute Error
 
 
 class Resistor(object):
@@ -42,6 +43,7 @@ class VoltageResistance(Resistor):
     def voltage(self, voltage):
         self._voltage = voltage
         self.current = self._voltage / self.ohms
+
 
 # Class to check that all resistance values are above zero
 class BoundedResistance(Resistor):
@@ -74,10 +76,12 @@ class FixedResistance(Resistor):
             raise AttributeError("Can't set attribute")
         self._ohms = ohms
 
+
 class Item30:
     """
     Consider @property instead of refactoring attributes
     """
+
     def __init__(self):
         bucket = Bucket(60)
         fill(bucket, 100)
@@ -111,6 +115,7 @@ class Item30:
             print('Not enough for 3 quota')
         print(bucketv2)
 
+
 class Bucket(object):
     def __init__(self, period):
         self.period_delta = timedelta(seconds=period)
@@ -120,12 +125,14 @@ class Bucket(object):
     def __repr__(self):
         return 'Bucket(quota=%d)' % self.quota
 
+
 def fill(bucket, amount):
     now = datetime.now()
     if now - bucket.reset_time > bucket.period_delta:
         bucket.quota = 0
         bucket.reset_time = now
     bucket.quota += amount
+
 
 def deduct(bucket, amount):
     now = datetime.now()
@@ -135,6 +142,7 @@ def deduct(bucket, amount):
         return False
     bucket.quota -= amount
     return True
+
 
 class BucketV2:
     def __init__(self, period):
@@ -168,6 +176,7 @@ class Item31:
     """
     Use descriptors for reusable @property methods
     """
+
     def __init__(self):
         galileo = Homework()
         galileo.grade = 95
@@ -181,8 +190,6 @@ class Item31:
         second_exam.writing_grade = 75
         print('First ', first_exam.writing_grade, 'is right')
         print('First ', second_exam.writing_grade, 'is right')
-
-
 
 
 # Validate that the grade received is a percentage
@@ -200,7 +207,8 @@ class Homework(object):
             raise ValueError('Grade must be between zero and 100')
         self._grade = value
 
-#Grade for exam
+
+# Grade for exam
 class Exam(object):
     def __init__(self):
         # multiple parts of grade
@@ -235,7 +243,7 @@ class Exam(object):
 # Save each instance in a dict
 class Grade:
     def __init__(self):
-        #self._values = {}
+        # self._values = {}
         self._values = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, instance_type):
@@ -249,16 +257,17 @@ class Grade:
         self._values[instance] = value
 
 
-
 class Examv2:
     math_grade = Grade()
     writing_grade = Grade()
     science_grade = Grade()
 
+
 class Item32:
     """
     Use __getattr__, __getattribute__, and __setattr__ for Lazy Attributes
     """
+
     def __init__(self):
         data = LazyDB()
         print('Before:', data.__dict__)
@@ -276,7 +285,7 @@ class Item32:
         print('foo,   ', data.foo)
 
         data = MissingPropertyDB()
-        #data.bad_name
+        # data.bad_name
 
         data = LoggingLazyDB()
         print('Before:       ', data.__dict__)
@@ -298,6 +307,7 @@ class Item32:
         data = DictionaryDB({'foo': 3})
         print(data.foo)
 
+
 class LazyDB:
     def __init__(self):
         self.exists = 5
@@ -307,10 +317,12 @@ class LazyDB:
         setattr(self, name, value)
         return value
 
+
 class LoggingLazyDB(LazyDB):
     def __getattr__(self, name):
         print('Called __getattr__(%s)' % name)
         return super().__getattr__(name)
+
 
 class ValidatingDB:
     def __init__(self):
@@ -331,15 +343,18 @@ class MissingPropertyDB:
         if name == 'bad_name':
             raise AttributeError('%s is missing' % name)
 
+
 class SavingDB:
     def __setattr__(self, name, value):
         pass
         super().__setattr__(name, value)
 
+
 class LoggingSavingDB(SavingDB):
     def __setattr__(self, name, value):
         print('Called __setattr__(%s, %r)' % (name, value))
         super().__setattr__(name, value)
+
 
 class BrokenDict:
     def __init__(self, data):
@@ -348,6 +363,7 @@ class BrokenDict:
     def __getattribute__(self, name):
         print('Called __getattribute__(%s)' % name)
         return self._data[name]
+
 
 class DictionaryDB:
     def __init__(self, data):
@@ -362,8 +378,9 @@ class Item33:
     """
     Validate subclasses with Metaclasses
     """
+
     def __init__(self):
-        print("Item 23 \n"
+        print("Item 33 \n"
               "-------")
         a = MyClass()
         b = a
@@ -371,10 +388,7 @@ class Item33:
         print(MyClass)
 
         print('Before class')
-        #print(Line.interior_angles())
-
-
-
+        # print(Line.interior_angles())
 
 
 class Meta(type):
@@ -383,6 +397,7 @@ class Meta(type):
         print((meta, name, bases, class_dict))
         print(orig_print)
         return type.__new__(meta, name, bases, class_dict)
+
 
 class MyClass(object, metaclass=Meta):
     def __init__(self):
@@ -393,13 +408,15 @@ class MyClass(object, metaclass=Meta):
     def foo(self):
         pass
 
+
 class ValidatePolygon(type):
     def __new__(meta, name, bases, class_dict):
         print(bases, 'bases')
-        if bases != (object, ):
+        if bases != (object,):
             if class_dict['sides'] < 3:
                 raise ValueError('Polygons need 3+ sides')
         return type.__new__(meta, name, bases, class_dict)
+
 
 class Polygon(object, metaclass=ValidatePolygon):
     sides = None
@@ -408,15 +425,256 @@ class Polygon(object, metaclass=ValidatePolygon):
     def interior_angles(cls):
         return (cls.sides - 2) * 180
 
+
 class Triangle(Polygon):
     sides = 3
 
+
 class Line(Polygon):
-     print('Before sides')
-     sides = 4
-#     print('After sides')
+    print('Before sides')
+    sides = 4
+
+
+# print('After sides')
 #     print('After class')
 
+class Item34():
+    def __init__(self):
+        print("--------\n"
+              "Item 34:\n"
+              "--------")
+        point = Point2D(5, 3)
+        print('Object:     ', point)
+        print('Serialized: ', point.serialize())
+
+        print("----------------\n"
+              "Deserialize test\n"
+              "----------------")
+        point = BetterPoint2D(2, 4)
+        print('Before:    ', point)
+        data = point.serialize()
+        print('Serialized:', data)
+        after = BetterPoint2D.deserialize(data)
+        print('After:     ', after)
+
+        print('-----------------------------------\n'
+              'More general deserialize function\n'
+              '-----------------------------------\n')
+
+        register_class(EvenBetterPoint2D)
+
+        point = EvenBetterPoint2D(5, 3)
+        print('Before:      ', point)
+        data = point.serialize()
+        print('Serialized:  ', data)
+        after = deserialize(data)
+        print('After:       ', after)
+
+        print('------------------\n'
+              'Auto Register\n'
+              '------------------\n')
+        v3 = Vector3D(10, -7, 3)
+        print('Before:     ', v3)
+        data = v3.serialize()
+        print('Serialized:', data)
+        print('After:     ', deserialize(data))
+
+
+import json
+
+
+class Serializable(object):
+    def __init__(self, *args):
+        self.args = args
+
+    def serialize(self):
+        return json.dumps({'args': self.args})
+
+
+class Point2D(Serializable):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return 'Point2D(%d, %d)' % (self.x, self.y)
+
+
+class Deserializable(Serializable):
+    @classmethod
+    def deserialize(cls, json_data):
+        params = json.loads(json_data)
+        return cls(*params['args'])
+
+
+class BetterPoint2D(Deserializable):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return 'BetterPoint2D(%d, %d)' % (self.x, self.y)
+
+
+class BetterSerializable(object):
+    def __init__(self, *args):
+        self.args = args
+
+    def serialize(self):
+        return json.dumps({
+            'class': self.__class__.__name__,
+            'args': self.args,
+        })
+
+    def __repr__(self):
+        s = 'BetterSerializable('
+        for i in range(len(self.args)):
+            s += str(self.args[i])
+            if i < len(self.args) - 1:
+                s += ', '
+        s += ')'
+        return s
+
+
+class EvenBetterPoint2D(BetterSerializable):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.x = x
+        self.y = y
+
+
+class Meta(type):
+    def __new__(meta, name, bases, class_dict):
+        cls = type.__new__(meta, name, bases, class_dict)
+        register_class(cls)
+        return cls
+
+
+registry = {}
+
+
+def register_class(target_class):
+    registry[target_class.__name__] = target_class
+
+
+def deserialize(data):
+    params = json.loads(data)
+    name = params['class']
+    target_class = registry[name]
+    return target_class(*params['args'])
+
+
+class RegisteredSerializable(BetterSerializable, metaclass=Meta):
+    pass
+
+
+class Vector3D(RegisteredSerializable):
+    def __init__(self, x, y, z):
+        super().__init__(x, y, z)
+        self.x, self.y, self.z = x, y, z
+
+
+class Item35:
+    def __init__(self):
+        print('----------------\n'
+              'Item 35\n'
+              '----------------')
+
+        # foo = Customer()
+        # print('Before:', repr(foo.first_name), foo.__dict__)
+        # foo.first_name = 'Euclid'
+        # print('After: ', repr(foo.first_name), foo.__dict__)
+
+        foo = BetterCustomer()
+        print('Before:', repr(foo.first_name), foo.__dict__)
+        foo.first_name = 'Euclid'
+        print('After: ', repr(foo.first_name), foo.__dict__)
+
+
+# class Field(object):
+#     def __init__(self, name):
+#         self.name = name
+#         self.internal_name = '_' + self.name
+#
+#     def __get__(self, instance, owner):
+#         if instance is None:
+#             return self
+#         return getattr(instance, self.internal_name, '')
+#
+#     def __set__(self, instance, value):
+#         setattr(instance, self.internal_name, value)
+
+
+
+# class Customer(object):
+#     # Class Attributes
+#     first_name = Field('first_name')
+#     last_name = Field('last_name')
+#     prefix = Field('prefix')
+#     suffix = Field('suffix')
+
+class Field(object):
+    def __init__(self):
+        # These will be assigned by the metaclass.
+        self.name = None
+        self.internal_name = None
+    def __get__(self, instance, instance_type):
+        if instance is None: return self
+        return getattr(instance, self.internal_name, '')
+
+    def __set__(self, instance, value):
+        setattr(instance, self.internal_name, value)
+
+
+class Meta(type):
+    def __new__(meta, name, bases, class_dict):
+        for key, value in class_dict.items():
+            if isinstance(value, Field):
+                value.name = key
+                value.internal_name = '_' + key
+        cls = type.__new__(meta, name, bases, class_dict)
+        return cls
+
+# class Meta(type):
+#     def __new__(meta, name, bases, class_dict):
+#         for key, value in class_dict.items():
+#             if isinstance(value, Field):
+#                 value.name = key
+#                 value.internal_name = '_' + key
+#         cls = type.__new__(meta, name, bases, class_dict)
+#         return cls
+
+class DatabaseRow(object, metaclass=Meta):
+    pass
+
+
+
+# class Field(object):
+#     def __init__(self):
+#         self.name = None
+#         self.internal_name = None
+#
+#     def __get__(self, instance, owner):
+#         if instance is None:
+#             return self
+#         return getattr(instance, self.internal_name, '')
+#
+#     def __set__(self, instance, value):
+#         setattr(instance, self.internal_name, value)
+
+# class BetterCustomer(DatabaseRow):
+#     first_name = Field()
+#     last_name = Field()
+#     prefix = Field()
+#     suffix = Field()
+
+class BetterCustomer(DatabaseRow):
+    first_name = Field()
+    last_name = Field()
+    prefix = Field()
+    suffix = Field()
 
 if __name__ == '__main__':
     sol = Item29()
@@ -424,3 +682,5 @@ if __name__ == '__main__':
     sol = Item31()
     sol = Item32()
     sol = Item33()
+    sol = Item34()
+    sol = Item35()
