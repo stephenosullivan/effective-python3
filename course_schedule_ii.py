@@ -12,26 +12,28 @@ class Solution(object):
 
         for subject, prereq in prerequisites:
             if subject in prereqDict:
-                prereqDict[subject].append(prereq)
+                prereqDict[subject].add(prereq)
             else:
-                prereqDict[subject] = [prereq]
+                prereqDict[subject] = {prereq}
 
             if prereq in futureSubject:
-                futureSubject[prereq].append(subject)
+                futureSubject[prereq].add(subject)
             else:
-                futureSubject[prereq] = [subject]
+                futureSubject[prereq] = {subject}
 
 
         # Initial classes have no prereqs
         queue = [num for num in range(numCourses) if num not in prereqDict]
-        completed = []
+        completed = set()
+        output = []
         to_complete = set(range(numCourses))
         while queue:
             subject = queue.pop()
             if subject not in completed:
 
                 # Newly completed subject
-                completed.append(subject)
+                completed.add(subject)
+                output.append(subject)
                 to_complete.remove(subject)
 
                 if subject in futureSubject:
@@ -45,4 +47,4 @@ class Solution(object):
 
         if to_complete:
             return []
-        return completed
+        return output
